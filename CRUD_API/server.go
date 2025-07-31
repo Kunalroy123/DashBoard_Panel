@@ -18,7 +18,7 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-// const defaultPort = "8080"
+const defaultPort = "8080"
 
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
@@ -30,6 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed opening connection: %v", err)
 	}
+	defer client.Close()
 
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
@@ -61,6 +62,11 @@ func main() {
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", corsHandler)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", dbURL)
-	log.Fatal(http.ListenAndServe(":"+dbURL, nil))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
