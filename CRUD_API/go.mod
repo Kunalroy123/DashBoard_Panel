@@ -1,6 +1,6 @@
 module CRUD_API
 
-go 1.24.5
+go 1.24.4
 
 require (
 	entgo.io/ent v0.14.4
